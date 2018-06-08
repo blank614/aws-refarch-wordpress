@@ -2,41 +2,32 @@
 
 ![](images/100x100_benefit_available.png)![](images/100x100_benefit_ingergration.png)![](images/100x100_benefit_ecryption-lock.png)![](images/100x100_benefit_fully-managed.png)![](images/100x100_benefit_lowcost-affordable.png)![](images/100x100_benefit_performance.png)![](images/100x100_benefit_scalable.png)![](images/100x100_benefit_storage.png)
 
-# **Hosting WordPress on AWS**
+# 在AWS托管WordPress**
 
-### Version 2.0.2
 
-ara-wp-2.0.2
 
----
-
-© 2018 Amazon Web Services, Inc. and its affiliates. All rights reserved. This work may not be  reproduced or redistributed, in whole or in part, without prior written permission from Amazon Web Services, Inc. Commercial copying, lending, or selling is prohibited.
-
-Errors or corrections? Email us at [darrylo@amazon.com](mailto:darrylo@amazon.com).
-
----
-
-This reference architecture provides a set of YAML templates for deploying WordPress on AWS using [Amazon Virtual Private Cloud (Amazon VPC)](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Introduction.html), [Amazon Elastic Compute Cloud (Amazon EC2)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html), [Auto Scaling](http://docs.aws.amazon.com/autoscaling/latest/userguide/WhatIsAutoScaling.html), [Elastic Load Balancing (Application Load Balancer)](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html), [Amazon Relational Database Service (Amazon RDS)](http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html), [Amazon ElastiCache](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/WhatIs.html), [Amazon Elastic File System (Amazon EFS)](http://docs.aws.amazon.com/efs/latest/ug/whatisefs.html), [Amazon CloudFront](http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html), [Amazon Route 53](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html), [Amazon Certificate Manager (Amazon ACM)](http://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html)  with [AWS CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html).
+此参考架构提供了一套用于在AWS上使用AWS部署WordPress的YAML模板:[Amazon Virtual Private Cloud (Amazon VPC)](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Introduction.html), [Amazon Elastic Compute Cloud (Amazon EC2)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html), [Auto Scaling](http://docs.aws.amazon.com/autoscaling/latest/userguide/WhatIsAutoScaling.html), [Elastic Load Balancing (Application Load Balancer)](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html), [Amazon Relational Database Service (Amazon RDS)](http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html), [Amazon ElastiCache](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/WhatIs.html), [Amazon Elastic File System (Amazon EFS)](http://docs.aws.amazon.com/efs/latest/ug/whatisefs.html), [Amazon CloudFront](http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html), [Amazon Route 53](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html), [Amazon Certificate Manager (Amazon ACM)](http://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html)  with [AWS CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html).
 
 
 ## Overview
 
 ![architecture-overview](images/aws-refarch-wordpress-v20171026.jpeg)
 
-The repository consists of a set of nested templates which are run in order from the master template. Run the master template to create the entire stack, entering the appropriate parameters. Nested templates can be run individually in order, entering the appropriate input parameters for each stack.
+
+这套知识库由一组嵌套模板组成，这些模板按照主模板的顺序运行。运行主模板创建整个堆栈，输入适当的参数。可以按顺序单独运行嵌套模板，为每个堆栈输入适当的输入参数。
 
 ## Update
-
-Please refer to [history.md](/HISTORY.md) for a detailed list of changes in 2.0.2.
+请参阅[history.md](/HISTORY.md)获取2.0.2中更改的详细列表。
 
 ## Parameters
 
 ![](images/aws-refarch-wordpress-mastertemplate-parameters.png)
 
 ## Steps to Run
-To launch the entire stack and deploy a WordPress site on AWS, click on one of the ***Launch Stack*** links below or download the Master template and launch it locally.
+要启动整个堆栈并在AWS上部署WordPress网站，请单击下面的*** Launch Stack ***链接之一或下载主模板并在本地启动它。
 
-You can launch this CloudFormation stack, using your account, in the following AWS Regions:
+您可以使用您的帐户在以下AWS区域中启动此CloudFormation堆栈：
+
 
 | AWS Region Code | Name | Launch |
 | --- | --- | --- 
@@ -48,14 +39,14 @@ You can launch this CloudFormation stack, using your account, in the following A
 | ap-southeast-2 |AP (Sydney)| [![cloudformation-launch-stack](images/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/new?stackName=WordPress&templateURL=https://s3.amazonaws.com/aws-refarch/wordpress/latest/templates/aws-refarch-wordpress-master-newvpc.yaml) |
 
 #### Select WordPress version
+可以选择WordPress的版本。可能现在的是最新的，4.5,4.6,4.7,4.8,4.9。
 
-The version of WordPress can be selected. Possible values are latest, nightly, 4.5, 4.6, 4.7, 4.8, 4.9.
+#### 通过从Amazon S3下载重写ini文件来覆盖PHP.ini的默认值
 
-#### Override PHP.ini defaults by downloading an overrides ini file from Amazon S3
+创建一个自定义的.ini文件，其中包含PHP覆盖并使其公开在S3存储桶中可用。这些可能是常见的覆盖**memory_limit**, **post_max_size**, **upload_max_filesize**, **max_input_time**, **max_execution_time**,等等。Amazon S3对象路径应使用https格式(e.g.https://s3.amazonaws.com/aws-refarch/wordpress/latest/bits/20-aws.ini).示例PHP覆盖在下面和 [samples/20-aws.ini](samples/20-aws.ini) 目录中
 
-Create a custom .ini file that includes PHP overrides and make it publically available in an S3 bucket. These could be common overrides like **memory_limit**, **post_max_size**, **upload_max_filesize**, **max_input_time**, **max_execution_time**, etc. Amazon S3 object path should use https format (e.g.https://s3.amazonaws.com/aws-refarch/wordpress/latest/bits/20-aws.ini). Sample PHP overrides are below and in the [samples/20-aws.ini](samples/20-aws.ini) directory.
 
-; Enable php.ini overrides for hosting WordPress on AWS - https://github.com/awslabs/aws-refarch-wordpress
+; 在AWS上启用用于托管WordPress的php.ini覆盖 - https://github.com/blank614/aws-refarch-wordpress
 
 memory_limit = 128M
 
@@ -67,76 +58,83 @@ max_input_time = 60
 
 max_execution_time = 30
 
-#### Using Bastion to access Wordpress instances
+#### 使用Bastion（堡垒机）访问Wordpress实例
 
-From the EC2 console, navigate to Auto Scaling groups and find the Bastion launch configuration for your stack. Edit the launch configuration and set the desired instances to 1. Press Save and the Bastion instance will be created. Bastion is a gateway to your instances for enhanced security. 
+在EC2控制台中，导航到Auto Scaling组并找到堆栈的Bastion启动配置。编辑启动配置并将所需实例设置为1.按下Save（保存），将会创建Bastion实例。堡垒机是实现增强安全性的入口。
 
-The Wordpress CLI is enabled on each instance, SSH into Bastion, then SSH into an instance. From the wordpress install directory `/var/www/wordpress/<site directory>` use the `wp` command to interact with your wordpress install.
+在每个实例上启用Wordpress CLI，SSH进入Bastion，然后SSH进入实例。从wordpress安装目录`/var/www/wordpress/<site directory>` 用 `wp` 命令与您的wordpress安装进行交互。
 
-#### Amazon EFS resources & dashboard
 
-This AWS Cloudformation template, and nested templates, will create an Amazon EFS file system and other AWS resources to monitor and send notifications if the burst credit balance of the file system drops below predefined thresholds. These alarms and other AWS CloudWatch metrics, including a file system size custom metric are added as widgets to a CloudWatch dashboard.
+#### 亚马逊EFS资源和仪表板
 
-Throughput on Amazon EFS scales as a file system grows. Because file-based workloads are typically spiky—driving high levels of throughput for short periods of time, and low levels of throughput the rest of the time—Amazon EFS is designed to burst to high throughput levels for periods of time. Amazon EFS uses a credit system to determine when file systems can burst. Each file system earns credits over time at a baseline rate that is determined by the size of the file system, and uses credits whenever it reads or writes data. The baseline rate is 50 MiB/s per TiB of storage (equivalently, 50 KiB/s per GiB of storage). Accumulated burst credits give the file system permission to drive throughput above its baseline rate. When a file system has a positive burst credit balance, it can burst. The burst rate is 100 MiB/s per TiB of storage (equivalently, 100 KiB/s per GiB of storage).
+此AWS Cloudformation模板和嵌套模板将创建Amazon EFS文件系统和其他AWS资源，以在文件系统的突发信用余额降至预定义阈值以下时监控和发送通知。这些警报和其他AWS CloudWatch指标（包括文件系统大小自定义指标）作为小组件添加到CloudWatch仪表板。
 
-If your WordPress deployment accessing the file system relies on the burst throughput for normal operations, running out of burst credits could negatively impact the workload, so monitoring the file system's burst credit balance is essential. The efsalarms template will create two Amazon CloudWatch alarms that will send email notifications if the burst credit balance drops below two predefined thresholds, a 'Warning' threshold and a 'Critical' threshold.  These thresholds are based on the number of minutes it would take to completely use all burst credits if the file system was being driven at the highest throughput rate possible, the permitted throughput rate. You enter these minute variables as input parameters in the Cloudformation template. The 'Warning' threshold and has a default value of 180 minutes. This means that a CloudWatch alarm will send an email notification 180 minutes before the credit balance drops to zero, based on the latest permitted throughput rate. The second alarm and notification is a 'Critical' notification and has a default value of 60 minutes. This alarm will send an email notification 60 minutes before the credit balance drops to zero, based on the latest permitted throughput rate. Permitted throughput is dynamic, scaling up as the file systems grows and scaling down as the file system shrinks. Therefore a third and fourth alarm is create that monitors permitted throughput. If the permitted throughput increases or decreases, an email notification is sent and an Auto Scaling Group will launch an EC2 instance that dynamically resets the 'Warning' and 'Critical' thresholds based on the latest permitted throughput rate. This EC2 instance will auto terminate and a new instance will launch to reset the thresholds only when the permitted throughput rate increases or decreases.
+随着文件系统的增长，Amazon EFS上的吞吐量也随之增加。由于基于文件的工作负载通常很尖锐，所以在短时间内驱动高吞吐量，其余时间吞吐量较低 - Amazon EFS旨在在一段时间内达到高吞吐量级别。 Amazon EFS使用信用系统来确定文件系统何时可以爆发。每个文件系统以基准速率获得一段时间的信用额度，该速度由文件系统的大小决定，并在读取或写入数据时使用信用额度。基准速率是每TiB存储50 MIB/s（相当于每GiB存储50 KiB/s）。累计突发额度赋予文件系统驱动吞吐量超过其基准速率的权限。当文件系统具有正突发信用余额时，它可能爆发。每个TiB存储的突发速率为100 MiB/s（相当于每GiB存储100 KiB/s）。
 
-A new AWS CloudWatch dashboard is also created with some Amazon EFS, Amazon RDS, Amazon ELB, and custom metrics. Amazon EFS burst credit balance threshold alarms are also displayed if they were selected to be created.
+如果访问文件系统的WordPress部署依赖于正常操作的突发吞吐量，则突发信用消失可能会对工作负载产生负面影响，因此监视文件系统的突发信用余额至关重要。 efsalarms模板将创建两个Amazon CloudWatch警报，如果突发信用余额降至两个预定义阈值以下，则会发送电子邮件通知，即“警告”阈值和“严重”阈值。这些阈值基于如果文件系统以最高吞吐速率（允许吞吐速率）驱动时完全使用所有突发信用所花费的分钟数。您可以在Cloudformation模板中输入这些微小变量作为输入参数。 “警告”阈值，默认值为180分钟。这意味着CloudWatch警报将根据最新的允许吞吐率，在信用余额降至零之前180分钟发送电子邮件通知。第二次警报和通知是“重要”通知，默认值为60分钟。根据最新的允许吞吐率，该警报将在信用余额降至零之前60分钟发送电子邮件通知。允许的吞吐量是动态的，随着文件系统的增长和扩展随着文件系统的缩小而扩大。因此，创建第三个和第四个警报来监视允许的吞吐量。如果允许的吞吐量增加或减少，将发送电子邮件通知，Auto Scaling Group将启动EC2实例，根据最新的允许吞吐量速率动态重置“警告”和“关键”阈值。此EC2实例将自动终止，并且只有在允许的吞吐率增加或减少时才会启动新实例以重置阈值。
 
-#### Sample dashboard
+新的AWS CloudWatch仪表板也使用一些Amazon EFS，Amazon RDS，Amazon ELB和自定义指标创建。如果选择创建亚马逊EFS突发信用余额阈值警报，也会显示。
+
+
+#### 示例仪表板
 
 ![](images/aws-refarch-wordpress-alarms.png)
 
-#### Optional: Encrypting Amazon Aurora DB data at Rest
+#### 可选：加密Amazon Aurora DB数据以防未然
 
-This reference architecture now allows you to encrypt your databases using keys you manage through AWS Key Management Service (KMS). On a database instance running with Amazon Aurora encryption, data stored at rest in the underlying storage is encrypted, as are the automated backups, snapshots, and replicas in the same cluster. Encryption and decryption are handled seamlessly so you don’t have to modify your application to access your data. When you launch this AWS Cloudformation stack, you can choose to enable database encryption via a parameter in the master template. You may use the default RDS key automatically created in your account by leaving the *"Existing AWS KMS CMK for RDS"* parameter empty or use a key you created using KMS to encrypt your data.
+现在，此参考体系结构允许您使用通过AWS Key Management Service（KMS）管理的密钥来加密数据库。在使用Amazon Aurora加密运行的数据库实例上，在底层存储中静态存储的数据将被加密，同一集群中的自动备份，快照和副本也会被加密。无缝处理加密和解密，因此您无需修改应用程序即可访问您的数据。启动此AWS Cloudformation堆栈时，您可以选择通过主模板中的参数启用数据库加密。您可以使用在您的帐户中自动创建的默认RDS密钥，方法是将*“现有AWS KMS CMK for RDS”*参数留空或使用您使用KMS创建的密钥来加密数据。
 
-#### Optional: Encrypting Amazon EFS Data & Metadata at Rest
 
-Amazon EFS integrates with AWS Key Management Service (KMS) to support encryting file system contents using AWS KMS Customer Master Keys (CMKs). In an encrypted file system, data and metadata are automatically encrypted before being written to the file system. Similarly, as data and metadata are read, they are automatically decrypted before being presented to the application. These processes are handled transparently by Amazon EFS, so you don’t have to modify WordPress to take advantage of encrypted file systems. Encryption at rest is enabled by default for file systems you create using this cloudformation template. This option is exposed as a configurable Cloudformation template parameter. 'true' creates an encrypted file system. 'false' creates an unencrypted file system. To use the AWS-managed CMK for Amazon EFS (key alias: aws/elasticfilesystem) leave the *"Existing AWS KMS CMK for EFS"* parameter empty. To use a specific customer-managed CMK (within this AWS account or another AWS account) enter the CMKs ARN in the "Existing AWS KMS CMK for EFS" parameter field.
+#### 可选：加密Amazon EFS数据和元数据以防未然
 
-#### Optional: Amazon Certificate Manager SSL/TLS Certificates
+Amazon EFS与AWS密钥管理服务（KMS）集成以支持使用AWS KMS客户主密钥（CMK）加密文件系统内容。在加密文件系统中，数据和元数据在写入文件系统之前会自动加密。同样，随着数据和元数据的读取，它们会在提交给应用程序之前自动解密。这些进程由Amazon EFS透明地处理，因此您不必修改WordPress即可利用加密文件系统。默认情况下，为使用此云构建模板创建的文件系统启用静态加密。此选项作为可配置的Cloudformation模板参数公开。 'true'创建一个加密的文件系统。 '假'创建一个未加密的文件系统。要为Amazon EFS使用AWS管理的CMK（密钥别名：aws/elasticfilesystem），请将*“EFS的现有AWS KMS CMK”*参数留空。要使用特定客户管理的CMK（在此AWS账户或其他AWS账户中），请在“现有AWS KMS CMK for EFS”参数字段中输入CMK ARN。
 
-AWS Certificate Manager (ACM) is a service that lets you easily provision, manage, and deploy Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS services. SSL/TLS certificates provisioned through AWS Certificate Manager are free.
 
-If you don't already have an SSL/TLS certificate for your domain name, it is recommended that you request one using ACM. For more information about requesting an SSL/TLS certificate using ACM, please read the [AWS Certificate Manager User Guide](http://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html).
+#### 可选：Amazon证书管理器SSL/TLS证书
 
-Use ACM to request a certificate or import a certificate into ACM. To use an ACM certificate with CloudFront (optional input parameter), you must request or import the certificate in the US East (N. Virginia) region. To use an ACM certificate with Amazon ELB - Application Load Balancer (optional input parameter), you must request or import the certificate in the region you create the CloudFormation stack. After you validate ownership of the domain names in your certificate, ACM provisions the certificate. Use the ACM certificate Amazon Resource Name (ARN) as the optional Cloudfront and/or Public ALB ACM certificate input parameters of the master template.
+AWS证书管理器（ACM）是一项服务，可让您轻松配置，管理和部署用于AWS服务的安全套接字层/传输层安全性（SSL/TLS）证书。通过AWS Certificate Manager配置的SSL/TLS证书是免费的。
 
-#### Stack Creation
+如果您的域名尚未拥有SSL/TLS证书，建议您使用ACM申请一个证书。有关使用ACM请求SSL/TLS证书的更多信息，请阅读 [AWS Certificate Manager User Guide](http://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html).
 
-There are two output URLs for the master template. The WPSiteURL will take you to your new WordPress site. It will be the site domain name if you provided one, the CloudFront URL if you chose to create a CloudFront distribution, or the domain name of the public application load balancer.  The second output URL will take you to the OpCache Status page for each EC2 instance in the AutoScaling group. By refreshing the page you will be able to verify OpCache has been enabled on each instance.
+使用ACM请求证书或将证书导入ACM。要在CloudFront中使用ACM证书（可选输入参数），您必须在US East (N. Virginia) region.申请或导入证书。要对Amazon ELB使用ACM证书 - 应用程序负载均衡器（可选输入参数），您必须在创建CloudFormation堆栈的区域中请求或导入证书。验证证书中域名的所有权后，ACM将提供证书。使用ACM证书Amazon资源名称（ARN）作为主模板的可选Cloudfront和/或公共ALB ACM证书输入参数。
+
+
+#### 堆栈创建
+
+主模板有两个输出URL。 WPSiteURL将带你到你的新的WordPress网站。如果您提供了一个，则它将成为网站域名，如果您选择创建CloudFront分配，则为CloudFront URL，或公共应用程序负载平衡器的域名。第二个输出URL将带您进入AutoScaling组中每个EC2实例的OpCache状态页面。通过刷新页面，您将能够验证每个实例上的OpCache已启用。
 
 #### OPcache
+OPcache是一个在每个EC2实例上运行的字节码缓存引擎，缓存预编译的PHP脚本，可以提高PHP应用程序的性能，如WordPress。当为Amazon EFS的网站提供PHP页面时，建议使用OpCache之类的缓存引擎。可以将OPcache配置为将其缓存存储在内存中或EBS卷上。
 
-OPcache is a byte-code cache engine running on each EC2 instance that caches precompiled PHP scripts that boosts performance of PHP applications like WordPress. It is recommended to use a caching engine like OpCache when serving PHP pages for a website from Amazon EFS.  OPcache can be configured to store it's cache in memory or on EBS volumes.
 
-##### Recommended OPcache Configuration Settings
+##### 推荐的OPcache配置设置
 
-- Mount the EFS file system using the default Linux mount options identified in the [Amazon EFS User Guide](http://docs.aws.amazon.com/efs/latest/ug/mounting-fs-mount-cmd-general.html).
-Changing some of the activating caching options from their defaults, like actimeo, acregmax, or acdirmax may generate significantly higher metadata operations by timing out the attribute caches more frequently. Careful testing is recommended if the defaults are not used.
- 
-- Increase the size of realpath_cache_size. Setting it to 512k is a good start but finding out how much realpath cache you’re actually using will help you fine tune this setting and be more precise. To find out how much real path cache you’re actually using, place the following php code snippet in a php file (you can use any name – for example realpathcache.php) and place it in your WordPress directory. Open a browser and point to this php file.  Refresh your page multiple times. The value being returned is the amount of memory in bytes realpath cache is using. Take note of the maximum value being returned after refreshing this page multiple times.  This, plus a little headroom, should be the value of the realpath_cache_size setting.
+- 使用 [Amazon EFS User Guide](http://docs.aws.amazon.com/efs/latest/ug/mounting-fs-mount-cmd-general.html).中标识的默认Linux安装选项挂载EFS文件系统。更改某些激活缓存选项的默认值，例如actimeo，acregmax或acdirmax可以通过更频繁地更新属性缓存来生成更高的元数据操作。如果不使用默认值，建议进行仔细的测试。
+
+- 增加realpath_cache_size的大小。将其设置为512k是一个好的开始，但要找出实际路径缓存的实际使用情况将有助于您微调此设置并更精确。要找出您实际使用的实际路径缓存的数量，请将以下php代码片段放在一个php文件中（您可以使用任何名称 - 例如realpathcache.php）并将其放置在您的WordPress目录中。打开一个浏览器并指向这个php文件。刷新您的页面多次。返回的值是实数路径高速缓存正在使用的以字节为单位的内存量。记下多次刷新此页面后返回的最大值。这加上一点余量应该是realpath_cache_size设置的值。
 ```
 <?php
  print_r(realpath_cache_size());
 ?>
 ```
- 
-- Please get the number of php files using “find . -type f -print | grep php | wc -l” in your WordPress directory. This number should be smaller than your opcache.max_accelerated_files settings. This setting controls how many PHP files, at most, can be held in memory at once. It's important that your project has LESS FILES than whatever you set this at.
+- 请在你的WordPress目录中使用 “find . -type f -print | grep php | wc -l”获取php文件的数量。该数字应该小于你设置的opcache.max_accelerated_files。此设置控制多少PHP文件可以最多一次性保存在内存中。在您的项目里面拥有比您设置的更少的文件，这很重要。
 
-- The default value for opcache.memory consumption is 64 MB. Increasing this setting could improve performance by caching more files in memory. Consider setting this to a value of 512MB (opcache.memory_consumption=512) or more to improve performance. Testing different opcache.memory consumption values is recommended to optimize the performance for your particular workload. In case memory size turns out to be a limiting factor, the cloudformation template also configures opcache.file_cache to use local storage (an EBS or instance store volume). During testing we recommend disabling opcache.validate_timestamps so calls are not being made to the NFS server to ensure opcache’s coherency. It is not recommended that opcache.validate_timestamps be disabled in production.
+- opcache.memory使用的默认值是64 MB。增加此设置可以通过在内存中缓存更多文件来提高性能。考虑将此值设置为512MB（opcache.memory_consumption = 512）或更多，以提高性能。建议测试不同的opcache.memory消耗值以优化特定工作负载的性能。如果内存大小成为限制因素，则cloudformation模板还会将opcache.file_cache配置为使用本地存储（EBS或实例存储卷）。在测试期间，我们建议禁用opcache.validate_timestamps，以避免调用NFS服务器来确保opcache的一致性。不建议在生产中禁用opcache.validate_timestamps。
 
-To learn more about OPcache, please read http://php.net/manual/en/book.opcache.php
 
-#### Offloading Static Assets
+要了解更多关于OPcache的信息，请阅读： http://php.net/manual/en/book.opcache.php
 
-WordPress has a large partner ecosystem to further enhance the usability, performance, and ease of maintenance of WordPress deployments. Plugins, like W3-Total-Cache, allow you to leverage other AWS services like Amazon S3 and Amazon CloudFront to offload and store static content. Others may like the simplicity of storing all content on Amazon EFS and avoid installing and managing 3rd party plugins. 
+#### 卸载静态资产
 
-#### Setup W3-Total-Cache
-The W3-Total-Cache plugin is required for the reference architecutre to have the best performance. W3 allows Offloading of static assets, and impliments memcached to cache Objects, Database Queries, ect.
+WordPress拥有庞大的合作伙伴生态系统，可进一步增强WordPress部署的可用性，性能和易维护性。与W3-Total-Cache一样，插件可让您利用Amazon S3和Amazon CloudFront等其他AWS服务来卸载和存储静态内容。其他人可能喜欢在Amazon EFS上存储所有内容的简单性，并避免安装和管理第三方插件。
 
-To setup W3-Total-Cache, activate it in plugins (Will be installed automatically on fresh CloudFormation launch). Navigate to ElasticCache -> Memcached in AWS, find the cluster created for the stack. Copy the **Configuration Endpoint** (formated: wor-el-1d6494yen6xl1.xxxxxx.cfg.usw2.cache.amazonaws.com:11211). Now under performance -> General, find the following options:
+
+#### 设置 W3-Total-Cache
+
+W3-Total-Cache插件必需对于参考架构具有最佳性能。 W3允许卸载静态资产，并使memcached缓存对象，数据库查询等。
+
+要设置W3-Total-Cache，请在插件中激活它（将在新的CloudFormation启动时自动安装）。导航到AWS中的ElasticCache - > Memcached，找到为堆栈创建的集群。复制 **Configuration Endpoint**（格式：wor-el-1d6494yen6xl1.xxxxxx.cfg.usw2.cache.amazonaws.com:11211）。现在在 performance -> General,下，找到以下选项：
+
 
 - Page Cache - enable, select Memcached
 - Minify - enable, select Disk (Minified files will be offloaded)
@@ -145,22 +143,24 @@ To setup W3-Total-Cache, activate it in plugins (Will be installed automatically
 - CDN - enable, select Amazon Cloudfront - Or Amazon Simple Storage Service
 - Fragment Cache - enable, select Memcached
 
-Press Save All & Purge Cache
+按 Save All & Purge Cache
 
-You will see errors saying 127.0.0.1:11211 not accessible. 
-Now Inside each menu in the sidebar navigation, scroll to Memcached server option (Advanced), and paste the ElasticCache Configuration Endpoint. Press test and ensure it passes.
+你会看到错误说127.0.0.1:11211不可访问。
+现在，在侧栏导航中的每个菜单中，滚动到Memcached server option (Advanced)，然后粘贴ElasticCache配置端点。按 test 并确保通过。
 
-Under Browser Cache, enable both **Set expires header** and **Set cache control header** (When testing this may be combersome)
+在浏览器缓存下，同时启用**Set expires header** and **Set cache control header** （当测试这可能是combersome）
 
-Under CDN, paste in a valid and uniquely created IAM Key and Secret that has access to S3 or an S3 bucket. Paste in the Cloudfront prefix that was created with the stack. Also scroll to Advanced and select **Export changed files automatically**
+在CDN下，粘贴有效且唯一创建的可访问S3或S3存储桶的IAM密钥和秘密。粘贴使用堆栈创建的Cloudfront前缀。也滚动到Advanced，然后选择**Export changed files automatically**
 
-Since files will be offloaded to S3, ensure to add the S3 bucket as an origin on your CloudFront Distribution. Simply navigate to the distribution, select the Origin tab, Create Origin, Click on the Origin Domain Name text field and find the S3 bucket used for CDN. **Note:** This will take some time, the Distribution will be In Progress until CDN replication is complete. 
+由于文件将被卸载到S3，请确保将S3存储桶作为CloudFront Distribution上的源点添加。只需导航至distribution，选择Origin选项卡， Create Origi，单击Origin Domain Name文本字段并找到用于CDN的S3存储桶。 **注意：**这将需要一些时间，直到CDN复制完成后，分发将进行中。
 
-## Master Template
-The master template receives all input parameters and passes them to the appropriate nested template which are executed in order based on conditions and dependencies.
-Review the template here [aws-refarch-wordpress-master.yaml](templates/aws-refarch-wordpress-master.yaml)
 
-### AWS Resources Created:
+## 主模板
+
+主模板接收所有输入参数并将它们传递给适当的嵌套模板，这些嵌套模板根据条件和依赖关系按顺序执行。
+在这里查看模板[aws-refarch-wordpress-master.yaml](templates/aws-refarch-wordpress-master.yaml)
+
+### AWS资源创建:
 
 - Amazon Virtual Private Cloud (Amazon VPC)
 - Internet Gateway (IGW)
@@ -245,15 +245,15 @@ Review the template here [aws-refarch-wordpress-master.yaml](templates/aws-refar
 - Wordpress Site Directory
 
 ## Master Template
-The master template receives all input parameters and passes them to the appropriate nested template which are executed in order based on dependencies.
-Review the template here [aws-refarch-wordpress-master.yaml](templates/aws-refarch-wordpress-master.yaml)
+主模板接收所有输入参数，并将它们传递给适当的嵌套模板，这些嵌套模板将根据依赖性按顺序执行。
+在这里查看模板 [aws-refarch-wordpress-master.yaml](templates/aws-refarch-wordpress-master.yaml)
 
 ## New VPC Template
-Review the template here [aws-refarch-wordpress-01-newvpc.yaml](templates/aws-refarch-wordpress-01-newvpc.yaml)
+在这里查看模板 [aws-refarch-wordpress-01-newvpc.yaml](templates/aws-refarch-wordpress-01-newvpc.yaml)
 
 ### Default VPC and subnet IP ranges
 
-The 'newvpc' stack defaults to the following network design (but these can be changed via master parameters):
+'newvpc'堆栈默认为以下网络设计（但可以通过主参数更改）：:
 
 | Item | CIDR Range | Usable IPs | Description |
 | --- | --- | --- | --- |
@@ -278,42 +278,42 @@ The 'newvpc' stack defaults to the following network design (but these can be ch
 | Public Subnet | 10.0.205.0/24 | 254 | Public subnet in sixth Availability Zone |
 
 ## Security Groups Template
-Review the template here [aws-refarch-wordpress-02-securitygroups.yaml](templates/aws-refarch-wordpress-02-securitygroups.yaml)
+在这里查看模板[aws-refarch-wordpress-02-securitygroups.yaml](templates/aws-refarch-wordpress-02-securitygroups.yaml)
 
 ## Bastion Template
-Review the template here [aws-refarch-wordpress-03-bastion.yaml](templates/aws-refarch-wordpress-03-bastion.yaml)
+在这里查看模板 [aws-refarch-wordpress-03-bastion.yaml](templates/aws-refarch-wordpress-03-bastion.yaml)
 
 ## Amazon EFS File System Template
-Review the template here [aws-refarch-wordpress-03-efsfilesystem.yaml](templates/aws-refarch-wordpress-03-efsfilesystem.yaml)
+在这里查看模板 [aws-refarch-wordpress-03-efsfilesystem.yaml](templates/aws-refarch-wordpress-03-efsfilesystem.yaml)
 
 ## Amazon EFS Alarms Template
-Review the template here [aws-refarch-wordpress-03-efsalarms.yaml](templates/aws-refarch-wordpress-03-efsalarms.yaml)
+在这里查看模板 [aws-refarch-wordpress-03-efsalarms.yaml](templates/aws-refarch-wordpress-03-efsalarms.yaml)
 
 ## Amazon ElastiCache Template
-Review the template here [aws-refarch-wordpress-03-elasticache.yaml](templates/aws-refarch-wordpress-03-elasticache.yaml)
+在这里查看模板 [aws-refarch-wordpress-03-elasticache.yaml](templates/aws-refarch-wordpress-03-elasticache.yaml)
 
 ## Amazon Elastic Load Balancing - Application Load Balancer Template
-Review the template here [aws-refarch-wordpress-03-publicelb.yaml](templates/aws-refarch-wordpress-03-publicalb.yaml)
+在这里查看模板 [aws-refarch-wordpress-03-publicelb.yaml](templates/aws-refarch-wordpress-03-publicalb.yaml)
 
 ## Amazon RDS Template
-Review the template here [aws-refarch-wordpress-03-rds.yaml](templates/aws-refarch-wordpress-03-rds.yaml)
+在这里查看模板 [aws-refarch-wordpress-03-rds.yaml](templates/aws-refarch-wordpress-03-rds.yaml)
 
 ## Amazon CloudFront Template
-Review the template here [aws-refarch-wordpress-04-cloudfront.yaml](templates/aws-refarch-wordpress-04-cloudfront.yaml)
+在这里查看模板 [aws-refarch-wordpress-04-cloudfront.yaml](templates/aws-refarch-wordpress-04-cloudfront.yaml)
 
 ## WordPress Web Template
-Review the template here [aws-refarch-wordpress-04-web.yaml](templates/aws-refarch-wordpress-04-web.yaml)
+在这里查看模板 [aws-refarch-wordpress-04-web.yaml](templates/aws-refarch-wordpress-04-web.yaml)
 
 ## Amazon Route 53 Template
-Review the template here [aws-refarch-wordpress-05-route53.yaml](templates/aws-refarch-wordpress-05-route53.yaml)
+在这里查看模板 [aws-refarch-wordpress-05-route53.yaml](templates/aws-refarch-wordpress-05-route53.yaml)
 
 ## Amazon CloudWatch Dashboard Template
-Review the template here [aws-refarch-wordpress-06-dashboard.yaml](templates/aws-refarch-wordpress-06-dashboard.yaml)
+在这里查看模板 [aws-refarch-wordpress-06-dashboard.yaml](templates/aws-refarch-wordpress-06-dashboard.yaml)
 
 
-## Add a new item to this list
+## 将新项目添加到此列表中
 
-If you found yourself wishing this set of frequently asked questions had an answer for a particular problem, please [submit a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/). The chances are that others will also benefit from having the answer listed here.
+如果您发现自己希望这组常见问题解答了特定问题，请 [submit a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/).。有可能是其他人也会从这里列出的答案中受益。
 
 
 ## License
